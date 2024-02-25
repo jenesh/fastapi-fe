@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# This is the Frontend to [fastapi-be](https://github.com/jenesh/fastapi-be)
+This is a simple Stock data for the daily historical performance of the stock using Alpha Vantage API. The backend is currently configured to send from 3 saved JSON files because of the rate limiting with the API. To get it fully dynamic for more stock tickers it would be relatively straightforward.
+
+Lbraries used:
+- [Chart.js](https://www.chartjs.org/)
+- [react-chartjs-2](https://react-chartjs-2.js.org/)
+- [react-table-library](https://react-table-library.com/?path=/story/getting-started-installation--page)
+
+<img src="assets/Screenshot 2024-02-24 at 8.49.25 PM.png" height="750">
+
+Note: This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 

@@ -1,94 +1,124 @@
-import Image from "next/image";
+"use client"
 import styles from "./page.module.css";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import { useState, useEffect } from "react";
+import { CompactTable } from '@table-library/react-table-library/compact';
+import { useTheme } from '@table-library/react-table-library/theme';
+import { getTheme } from '@table-library/react-table-library/baseline';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+type TableItem = {
+  date: string;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+};
+
+const COLUMNS = [
+  { label: 'Date', renderCell: (item: TableItem) => item.date },
+  {
+    label: 'Open', renderCell: (item: TableItem) => item.open
+  },
+  {
+    label: 'High', renderCell: (item: TableItem) => item.high
+  },
+  {
+    label: 'Low', renderCell: (item: TableItem) => item.low
+  },
+  { label: 'Close', renderCell: (item: TableItem) => item.close },
+  {
+    label: 'Volume',
+    renderCell: (item: TableItem) => item.volume,
+  },
+];
 
 export default function Home() {
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+  const [tableData, setTableData] = useState<TableItem[]>([]);
+  const [ticker, setTicker] = useState("IBM");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        `http://127.0.0.1:8000/stocks/${ticker}/daily`
+      );
+      const { chartData, tableData } = await response.json();
+      chartData.datasets[0].borderColor = 'rgb(255, 99, 132)';
+      chartData.datasets[0].backgroundColor = 'rgba(255, 99, 132, 0.5)';
+      setChartData(chartData);
+      setTableData(tableData);
+    };
+    fetchData();
+  }, [ticker]);
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: `Stock Price for ${ticker}`,
+      },
+    },
+  };
+
+  const nodes = [
+    {
+      date: "2021-01-01",
+      open: "100",
+      close: "110",
+      volume: "1000",
+    },
+    {
+      date: "2021-01-02",
+      open: "110",
+      close: "120",
+      volume: "2000",
+    },
+  ];
+
+  const theme = useTheme(getTheme());
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
+      <h1>Stock Chart</h1>
+      <div>
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+          <select onChange={(e) => setTicker(e.target.value)}>
+            <option value="IBM">IBM</option>
+            <option value="TSCO">TSCO</option>
+            <option value="SHOP">SHOP</option>
+          </select>
         </div>
+        <Line options={options} data={chartData} height={500} width={800} />
       </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <h1>Stock Table</h1>
+      <div>
+        <CompactTable columns={COLUMNS} data={{ nodes: tableData }} theme={theme} />
       </div>
     </main>
   );
