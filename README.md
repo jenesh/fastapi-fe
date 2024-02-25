@@ -1,5 +1,5 @@
 # This is the Frontend to [fastapi-be](https://github.com/jenesh/fastapi-be)
-This is a simple Stock data for the daily historical performance of the stock using Alpha Vantage API. The backend is currently configured to send from 3 saved JSON files because of the rate limiting with the API. To get it fully dynamic for more stock tickers it would be relatively straightforward.
+This is a simple Stock data for the daily historical performance of the stock using Alpha Vantage API. The backend is currently configured to send from 3 saved JSON files because of the rate limiting with the API. To get it fully dynamic (real API calls) for more stock tickers it would be relatively straightforward.
 
 Lbraries used:
 - [Chart.js](https://www.chartjs.org/)
